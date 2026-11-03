@@ -22,20 +22,38 @@ export class BallArt {
   private sprites = new Map<string, Sprite>();
   private thumbs = new Map<string, string>();
 
-  /** Loads every tier's pictures. Missing files are fine. Returns how many usual faces were found. */
-  async load(): Promise<number> {
-    const get = (path?: string) => (path ? loadImage(assetUrl(path)) : Promise.resolve(null));
+  /**
+   * Loads every tier's pictures; missing files are fine. Each one is used as soon as it
+   * arrives (`onPicture` is called then), so one slow file never holds back the rest. A
+   * ball's shocked face loads after its usual one. Returns how many usual faces were found.
+   */
+  async load(onPicture: () => void = () => {}): Promise<number> {
+    const get = (path: string | undefined, into: (HTMLImageElement | null)[], tier: number) =>
+      path
+        ? loadImage(assetUrl(path)).then((img) => {
+            if (!img) return false;
+            into[tier] = img;
+            this.forget(tier);
+            onPicture();
+            return true;
+          })
+        : Promise.resolve(false);
     const found = await Promise.all(
-      TIERS.map(async (t, i) => {
-        const [img, shocked] = await Promise.all([get(t.image), get(t.shockedImage)]);
-        this.images[i] = img;
-        this.shockedImages[i] = shocked;
-        return img !== null;
-      }),
+      TIERS.map((t, i) =>
+        get(t.image, this.images, i).then(async (ok) => {
+          await get(t.shockedImage, this.shockedImages, i);
+          return ok;
+        }),
+      ),
     );
-    this.sprites.clear();
-    this.thumbs.clear();
     return found.filter(Boolean).length;
+  }
+
+  /** Drops the cached sprites and thumbnails of one tier, so they are drawn again. */
+  private forget(tier: number): void {
+    for (const cache of [this.sprites, this.thumbs]) {
+      for (const key of [...cache.keys()]) if (key.startsWith(`${tier}:`)) cache.delete(key);
+    }
   }
 
   hasImage(tier: number): boolean {

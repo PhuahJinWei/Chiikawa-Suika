@@ -15,11 +15,20 @@ This folder is not part of the game build.
    hand-drawn outline to every ball (the brown ring). Colour the character's body out to at
    least the dashed pink line (the ring covers the rest), and keep faces inside it. The faint
    lines mark the centre, an eye line and a mouth line, as a starting point.
-3. Hide the template layer, then export a transparent PNG. Any size works (512×512 is plenty);
-   keep it square and keep the circle where the template put it.
-4. Save it as `public/balls/NN.png` and refresh the game.
-5. Optional: draw a shocked face on the same circle and save it as `public/balls/NN_shocked.png`.
+3. Hide the template layer, then export a transparent PNG. Keep it square and keep the circle
+   where the template put it.
+4. Save it in this folder as `NN.png` (e.g. `03.png`).
+5. Optional: draw a shocked face on the same circle and save it as `NN_shocked.png`.
    The game swaps to it for a moment when the friend is hit hard, shaken or flipped.
+6. Copy the drawings into the game at the size it needs, then refresh the game:
+
+   ```powershell
+   .\art-templates\export-balls.ps1
+   ```
+
+   This saves 512×512 copies in `public/balls/`, which is as big as a ball is ever shown. Keep
+   the full-size drawings here; full-size files in the game are slow to load and can run phone
+   in-app browsers (LINE's, for example) out of memory, leaving the placeholder faces showing.
 
 ## Tips
 

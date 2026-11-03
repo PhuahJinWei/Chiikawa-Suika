@@ -16,7 +16,9 @@ Drawing templates and a size guide are in the art-templates folder at the projec
 (see art-templates/README.md).
 
 Tips for the drawings
-- Square PNG with a transparent background, e.g. 512 x 512 px.
+- Square PNG with a transparent background, 512 x 512 px. Bigger files load slowly and can
+  run phone in-app browsers out of memory. Keep full-size drawings in art-templates and run
+  art-templates\export-balls.ps1 to copy them here at 512 x 512.
 - The circle touching the edges of the square is exactly the size the physics uses.
 - Don't draw an outline: the game trims the picture to that circle and adds the same
   outline to every ball. Colour the body right out to the edge; the corners are cut off.

@@ -30,11 +30,48 @@ export function exposeImagesToCss(root: HTMLElement = document.documentElement):
   }
 }
 
-export function loadImage(src: string): Promise<HTMLImageElement | null> {
+/**
+ * Loads a picture, or null once it is missing or keeps failing. Phone connections and in-app
+ * browsers (LINE's, for one) sometimes drop or stall a request, so a failed attempt is tried
+ * again after a moment, and a slow one gets a second attempt alongside it (the first to
+ * finish wins). Retries add `?try=N` so a broken cached copy is not handed back again.
+ */
+export function loadImage(src: string, tries = 3, patience = 8000): Promise<HTMLImageElement | null> {
   return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(img.naturalWidth > 0 ? img : null);
-    img.onerror = () => resolve(null);
-    img.src = src;
+    let settled = false;
+    let started = 0;
+    let running = 0;
+    let queued = false;
+    const settle = (img: HTMLImageElement | null) => {
+      if (settled) return;
+      settled = true;
+      resolve(img);
+    };
+    const queue = (delay: number) => {
+      if (settled || queued || started >= tries) return false;
+      queued = true;
+      setTimeout(() => {
+        queued = false;
+        attempt();
+      }, delay);
+      return true;
+    };
+    const attempt = () => {
+      if (settled) return;
+      started++;
+      running++;
+      const img = new Image();
+      const slow = setTimeout(() => queue(0), patience);
+      const end = (ok: boolean) => {
+        clearTimeout(slow);
+        running--;
+        if (ok) settle(img);
+        else if (!queue(1000) && running === 0 && !queued) settle(null);
+      };
+      img.onload = () => end(img.naturalWidth > 0);
+      img.onerror = () => end(false);
+      img.src = started === 1 ? src : `${src}${src.includes('?') ? '&' : '?'}try=${started}`;
+    };
+    attempt();
   });
 }

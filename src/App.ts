@@ -143,9 +143,18 @@ export class App {
     this.refreshTitle();
     requestAnimationFrame(this.frame);
 
-    await this.art.load();
-    this.renderPictures();
-    this.hud.refreshArt(this.game);
+    // The game draws each face as it arrives; menus and the HUD catch up in small batches.
+    let refresh = 0;
+    const showPictures = () => {
+      this.renderPictures();
+      this.hud.refreshArt(this.game);
+    };
+    await this.art.load(() => {
+      clearTimeout(refresh);
+      refresh = window.setTimeout(showPictures, 250);
+    });
+    clearTimeout(refresh);
+    showPictures();
   }
 
   /**

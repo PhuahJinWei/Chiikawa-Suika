@@ -55,7 +55,8 @@ npm run dev
 Then open http://localhost:5173. `npm run build` creates a static site in `dist/` that you can
 upload to any web host, and `npm test` runs the game's tests.
 
-To change the friends, replace the pictures in `public/balls/` (see the
+To change the friends, replace the drawings in `art-templates/` and run
+`art-templates/export-balls.ps1` to copy them into the game (see the
 [drawing templates](art-templates/README.md)). Gameplay settings such as scoring and ability
 charges are in [src/config/game.ts](src/config/game.ts).
 
