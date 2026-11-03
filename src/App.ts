@@ -64,6 +64,13 @@ const GAME_OVER_PAUSE = 1500;
 /** How often (ms) a game in progress is saved while playing. */
 const SAVE_EVERY = 2000;
 
+/** Matches the PC layout's media query in main.css. */
+const PC_LAYOUT = '(min-aspect-ratio: 11/10) and (min-width: 640px)';
+/** Height (px) the phone layout's top bar and ability tray take from the cabinet. */
+const PHONE_BARS = 175;
+/** Width (px) the side-column layout's column, gaps and padding take from the cabinet. */
+const SIDE_COLUMN = 156;
+
 const clampTier = (t: number) => Math.max(0, Math.min(MAX_TIER, Math.round(t) || 0));
 
 /** Wires the game, renderer, input, HUD, menus, sound and storage together. */
@@ -114,6 +121,8 @@ export class App {
     this.applySettings();
     this.music.start();
 
+    this.chooseLayout();
+    window.addEventListener('resize', () => this.chooseLayout());
     const canvas = this.canvas;
     const fit = () => this.renderer.resize(canvas.clientWidth, canvas.clientHeight);
     fit(); // size it now: the first frame must not draw into an unmeasured canvas
@@ -137,6 +146,24 @@ export class App {
     await this.art.load();
     this.renderPictures();
     this.hud.refreshArt(this.game);
+  }
+
+  /**
+   * Phone layout (top bar, cabinet, tray) or side-column layout (cabinet, slim column)?
+   * Whichever gives the clearly bigger box on this screen, so it suits any device shape:
+   * long phones keep the phone layout, wide outer screens and unfolded fold phones get the
+   * column. Wide screens use the PC layout (a CSS media query) and never get the column.
+   */
+  private chooseLayout(): void {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const pc = matchMedia(PC_LAYOUT).matches;
+    // box width for a canvas of cw x ch (the stage keeps its shape)
+    const box = (cw: number, ch: number) => Math.max(0, Math.min(cw, (ch * STAGE.width) / STAGE.height));
+    const phone = box(Math.min(w, 640) - 8, h - PHONE_BARS);
+    const side = box(w - SIDE_COLUMN, h - 23);
+    const useSide = !pc && h >= 500 && side > phone * 1.05;
+    document.documentElement.classList.toggle('side-layout', useSide);
   }
 
   private get playing(): boolean {
