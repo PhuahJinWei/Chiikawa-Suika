@@ -1,0 +1,12 @@
+{
+  "name": "もちもちポン!",
+  "short_name": "もちもちポン",
+  "lang": "ja",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fff3c2",
+  "theme_color": "#fff3c2",
+  "icons": [{ "src": "images/icons/icon_03usagi.png", "sizes": "346x346", "type": "image/png", "purpose": "any" }]
+}

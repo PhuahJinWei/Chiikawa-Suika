@@ -1,0 +1,1796 @@
+/*
+ * Mobile-first styles. The base layout is a phone in portrait; wider screens (PC, tablets
+ * in landscape, unfolded fold phones in landscape) get side panels further down.
+ * Pictures come from /public/images through --img-* variables (see src/config/assets.ts).
+ */
+
+:root {
+  --ink: #8a6262;
+  --text: #6e4c4c;
+  --text-soft: #a07f7c;
+  --paper: #fbf9f5;
+  --pink: #ffc2cc;
+  --pink-light: #ffdae0;
+  --pink-btn: #f7acb7;
+  --pink-rim: #fcdcdd;
+  --pink-shadow: #c9939b;
+  --pink-outline: #e98a9c;
+  --yellow: #fff3c2;
+  --yellow-deep: #ffdc85;
+  --mint: #a8d8b0;
+  --danger: #f0647a;
+  /* outline width of the cabinet, tray and side panels */
+  --line: 3px;
+  --lift: drop-shadow(0 2px 0 rgba(138, 98, 98, 0.25));
+  --font: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', 'BIZ UDPGothic', 'Yu Gothic UI', 'Meiryo', system-ui, sans-serif;
+  --font-title: 'Hachi Maru Pop', var(--font);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overscroll-behavior: none;
+}
+
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--yellow);
+  overflow: hidden;
+  line-break: strict;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: manipulation;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+img {
+  -webkit-user-drag: none;
+}
+
+/* Japanese sentences wrap between words (the spaces) and balance their lines, never "よ。" alone. */
+p {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--img-background) center / cover no-repeat, var(--yellow);
+}
+
+/* ------------------------------------------------------------------ shared bits */
+
+.img-btn {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: transparent center / contain no-repeat;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.img-btn:active {
+  transform: scale(0.9);
+}
+
+/* A small paper tag: "ベスト 594", "つぎ", "なかま". */
+.chip {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 5px;
+  margin: 0;
+  padding: 1px 10px 2px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--text-soft);
+  font-weight: 900;
+  font-size: 11px;
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.chip b {
+  color: var(--text);
+  font-size: 1.15em;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+/* White lettering with a pink outline, as on the ribbon pictures. */
+.ribbon,
+.score {
+  color: #fff;
+  text-shadow:
+    2px 0 var(--pink-outline),
+    -2px 0 var(--pink-outline),
+    0 2px var(--pink-outline),
+    0 -2px var(--pink-outline),
+    1.4px 1.4px var(--pink-outline),
+    -1.4px -1.4px var(--pink-outline),
+    1.4px -1.4px var(--pink-outline),
+    -1.4px 1.4px var(--pink-outline);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 8px 22px;
+  border: 3px solid var(--ink);
+  border-radius: 999px;
+  background: var(--paper);
+  box-shadow: 0 4px 0 var(--ink);
+  color: var(--text);
+  font-weight: 900;
+  font-size: 17px;
+  line-height: 1.1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    transform 0.08s,
+    box-shadow 0.08s,
+    filter 0.15s;
+}
+
+.btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--ink);
+}
+
+.btn-pink {
+  background: var(--pink-btn);
+  border-color: var(--pink-rim);
+  box-shadow: 0 4px 0 var(--pink-shadow);
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(150, 80, 90, 0.35);
+}
+
+.btn-pink:active {
+  box-shadow: 0 1px 0 var(--pink-shadow);
+}
+
+.btn:disabled {
+  cursor: default;
+  filter: grayscale(0.8);
+  opacity: 0.55;
+  transform: none;
+}
+
+.btn-big {
+  min-width: 200px;
+  min-height: 58px;
+  font-size: 22px;
+}
+
+.link-btn {
+  padding: 8px 12px;
+  border: 0;
+  background: none;
+  color: var(--danger);
+  font-weight: 900;
+  font-size: 14px;
+  text-decoration: underline dotted 2px;
+  text-underline-offset: 5px;
+  cursor: pointer;
+}
+
+.btn:focus-visible,
+.img-btn:focus-visible,
+.link-btn:focus-visible,
+.ability:focus-visible,
+.next:focus-visible,
+.icon-btn:focus-visible,
+.pick-option:focus-visible {
+  outline: 3px solid #8fbbe6;
+  outline-offset: 3px;
+}
+
+/* ------------------------------------------------------------------ game layout: phone portrait */
+
+/*
+ * A top bar (menu, score, next) over one crane-game cabinet: the claw zone and the box,
+ * with the ability tray as its control panel. Spare height on tall phones becomes cable
+ * length inside the cabinet (the rail is pinned to its top, see Renderer.drawRail).
+ */
+.game {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: max(8px, env(safe-area-inset-top)) max(4px, env(safe-area-inset-right)) 0 max(4px, env(safe-area-inset-left));
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'menu score next'
+    'cab cab cab'
+    'tray tray tray';
+  column-gap: 8px;
+  align-items: center;
+}
+
+.side {
+  display: contents;
+}
+
+.menu-btn {
+  grid-area: menu;
+  width: 50px;
+  height: 50px;
+  margin: 0 0 8px 4px;
+  background-image: var(--img-menu);
+  filter: var(--lift);
+}
+
+/* the score on a ribbon, with the best score as a chip tucked under it */
+.scorebox {
+  grid-area: score;
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+  margin-bottom: 8px;
+}
+
+.score {
+  display: grid;
+  place-items: center;
+  width: min(100%, 236px);
+  aspect-ratio: 531 / 108;
+  padding-bottom: 3%;
+  background: var(--img-ribbon) center / 100% 100% no-repeat;
+  font-weight: 900;
+  font-size: 25px;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  /* brown outline like the logo: the score must read at a glance */
+  --pink-outline: var(--ink);
+}
+
+.score.bump {
+  animation: bump 0.25s ease-out;
+}
+
+@keyframes bump {
+  40% {
+    scale: 1.08;
+  }
+}
+
+.best-chip {
+  position: relative;
+  margin-top: -7px;
+}
+
+.next {
+  grid-area: next;
+  display: grid;
+  justify-items: center;
+  margin: 0 4px 8px 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.next-bubble {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  background: var(--img-blob) center / 100% 100% no-repeat;
+  filter: var(--lift);
+  transition: transform 0.1s;
+}
+
+.next:active .next-bubble {
+  transform: scale(0.92);
+}
+
+.next-bubble img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+}
+
+.next-bubble img.pop {
+  animation: pop-in 0.3s cubic-bezier(0.2, 1.6, 0.4, 1);
+}
+
+@keyframes pop-in {
+  from {
+    transform: scale(0.3);
+  }
+}
+
+.next .chip {
+  position: relative;
+  margin-top: -9px;
+}
+
+.chart {
+  display: none;
+}
+
+/* ------------------------------------------------------------------ cabinet (the stage) */
+
+.cabinet {
+  grid-area: cab;
+  position: relative;
+  /* above the tray: the canvas reaches into the tray's top line, where the box stands */
+  z-index: 1;
+  align-self: stretch;
+  min-width: 0;
+  min-height: 0;
+  border: var(--line) solid var(--ink);
+  border-bottom: 0;
+  border-radius: 26px 26px 0 0;
+  background: repeating-linear-gradient(90deg, #ffeef2 0 22px, #fff7f8 22px 44px);
+}
+
+/*
+ * The canvas covers the cabinet's side lines and the line below it, so the box's own
+ * outline lands on them (one line, not two) when the box fills the width.
+ */
+#stage {
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--line));
+  right: calc(-1 * var(--line));
+  bottom: calc(-1 * var(--line));
+  width: calc(100% + 2 * var(--line));
+  height: calc(100% + var(--line));
+  clip-path: inset(0 round 23px 23px 0 0);
+  touch-action: none;
+  cursor: pointer;
+  outline: none;
+}
+
+.cabinet.removing #stage {
+  cursor: crosshair;
+}
+
+/* ------------------------------------------------------------------ abilities */
+
+/* The cabinet's control panel. */
+.abilities {
+  grid-area: tray;
+  align-self: stretch;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  padding: 12px 4px max(10px, env(safe-area-inset-bottom));
+  border: var(--line) solid var(--ink);
+  border-bottom: 0;
+  background: var(--paper);
+}
+
+.ability {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 4px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.ab-icon {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  transition: transform 0.1s;
+}
+
+.ability:active .ab-icon {
+  transform: scale(0.9);
+}
+
+.ab-blob {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: var(--img-blob) center / 100% 100% no-repeat;
+  color: var(--text);
+  transition:
+    filter 0.2s,
+    opacity 0.2s;
+}
+
+.ab-blob svg {
+  width: 60%;
+  height: 60%;
+}
+
+/* recharge progress: only shown while the ability has no charges */
+.ab-ring {
+  position: absolute;
+  inset: -5px;
+  rotate: -90deg;
+  visibility: hidden;
+}
+
+.ab-ring circle {
+  fill: none;
+  stroke-width: 4.5;
+}
+
+.ab-ring .track {
+  stroke: rgba(138, 98, 98, 0.16);
+}
+
+.ab-ring .fill {
+  stroke: var(--pink-btn);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.3s;
+}
+
+/* one gem per charge */
+.ab-gems {
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  display: flex;
+  padding: 1px 3px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.gem {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  background: var(--img-gem) center / contain no-repeat;
+}
+
+.ab-name {
+  max-width: 100%;
+  font-weight: 900;
+  font-size: 13px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.ability.empty .ab-blob {
+  filter: grayscale(1);
+  opacity: 0.45;
+}
+
+.ability.empty .ab-ring {
+  visibility: visible;
+}
+
+.ability.empty .ab-gems {
+  display: none;
+}
+
+.ability.empty .ab-name,
+.ability.busy .ab-name {
+  color: var(--text-soft);
+}
+
+.ability.busy .ab-blob,
+.ability.busy .ab-gems {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+/* けす is waiting for a friend to be tapped: its button turns into やめる */
+.ability.active .ab-icon::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border: 3px dashed var(--danger);
+  border-radius: 50%;
+  animation: spin 6s linear infinite;
+}
+
+.ability.active .ab-gems {
+  display: none;
+}
+
+.ability.active .ab-name {
+  color: var(--danger);
+}
+
+@keyframes spin {
+  to {
+    rotate: 1turn;
+  }
+}
+
+.ability.ready-pulse .ab-icon {
+  animation: ready 0.9s ease-out;
+}
+
+@keyframes ready {
+  30% {
+    transform: scale(1.15) rotate(-6deg);
+  }
+  60% {
+    transform: scale(1.05) rotate(4deg);
+  }
+}
+
+/* ------------------------------------------------------------------ title screen */
+
+.screen {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.25s,
+    visibility 0s 0.25s;
+}
+
+.screen.open {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.25s,
+    visibility 0s;
+}
+
+.title-screen {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  overflow: hidden;
+  padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  background: var(--img-background) center / cover no-repeat, var(--yellow);
+}
+
+/* logo, the friends, then the buttons: one centred column */
+.title-main {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: clamp(14px, 3.2dvh, 30px);
+  width: min(420px, 100%);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 710 / 249;
+  margin: 0;
+  padding: 18% 4% 3%;
+  background: var(--img-title-frame) center / 100% 100% no-repeat;
+  font-family: var(--font-title);
+  font-weight: 400;
+  font-size: clamp(30px, 10vw, 50px);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  color: #fff;
+  text-shadow:
+    2.5px 0 var(--ink),
+    -2.5px 0 var(--ink),
+    0 2.5px var(--ink),
+    0 -2.5px var(--ink),
+    2px 2px var(--ink),
+    -2px -2px var(--ink),
+    2px -2px var(--ink),
+    -2px 2px var(--ink),
+    0 5px rgba(138, 98, 98, 0.35);
+}
+
+.logo .c1 {
+  color: var(--pink);
+}
+.logo .c2 {
+  color: var(--yellow-deep);
+}
+.logo .c3 {
+  color: #bfdcef;
+}
+.logo .c4 {
+  color: #c4e6b8;
+}
+
+@keyframes bob {
+  50% {
+    transform: translateY(-9px) rotate(5deg);
+  }
+}
+
+/*
+ * The hero: five friends piled up in the bushes, placed on a 300 x 150 grid (App.HERO) so
+ * they touch like in the game. It shrinks on short screens so the buttons always fit.
+ */
+.hero {
+  position: relative;
+  width: clamp(170px, min(86vw, (100dvh - 390px) * 2), 340px);
+  aspect-ratio: 2;
+}
+
+/* a soft shadow on the ground under the pile */
+.hero::before {
+  content: '';
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  bottom: -5%;
+  height: 14%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(138, 98, 98, 0.22), transparent);
+}
+
+.hero .bush {
+  position: absolute;
+  bottom: -6%;
+  background: center bottom / contain no-repeat;
+}
+
+.hero .bush-1 {
+  left: -16%;
+  width: 46%;
+  aspect-ratio: 218 / 152;
+  background-image: var(--img-bush-1);
+}
+
+.hero .bush-2 {
+  right: -17%;
+  width: 48%;
+  aspect-ratio: 249 / 149;
+  background-image: var(--img-bush-2);
+}
+
+.hero-friend {
+  position: absolute;
+  z-index: 1;
+  height: auto;
+  aspect-ratio: 1;
+  cursor: pointer;
+  transform-origin: 50% 100%;
+  /* mochi: a slow squish, each friend in its own rhythm */
+  animation: squish 2.8s ease-in-out infinite;
+  animation-delay: calc(var(--i) * -0.55s);
+}
+
+@keyframes squish {
+  50% {
+    scale: 1.04 0.96;
+  }
+}
+
+/* surprised: a hop with the shocked face (set from App.surprise) */
+.hero-friend.hop {
+  animation: hop 0.7s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+
+@keyframes hop {
+  0% {
+    scale: 1.08 0.9;
+  }
+  30% {
+    translate: 0 -22%;
+    scale: 0.94 1.08;
+  }
+  62% {
+    translate: 0 0;
+    scale: 1.08 0.92;
+  }
+  80% {
+    scale: 0.98 1.02;
+  }
+}
+
+.title-menu {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: min(300px, 92%);
+}
+
+.title-menu .btn-big {
+  width: 100%;
+}
+
+/* はじめから, when つづきから leads */
+#btn-play:not(.btn-big) {
+  width: min(220px, 80%);
+  min-height: 44px;
+  font-size: 16px;
+}
+
+#title-best {
+  margin: 0;
+  font-size: 13px;
+}
+
+/* あそびかた and せってい as the same round buttons as the pause menu */
+.title-icons {
+  display: grid;
+  grid-template-columns: repeat(2, 92px);
+  justify-content: center;
+  gap: 28px;
+  margin-top: 2px;
+}
+
+.title-icons .icon-btn {
+  font-size: 13px;
+}
+
+/* phones turned sideways: logo and friends on the left, the buttons on the right */
+@media (min-aspect-ratio: 1/1) and (max-height: 520px) {
+  .title-main {
+    grid-template-columns: minmax(0, 1fr) 250px;
+    grid-template-areas:
+      'logo menu'
+      'hero menu';
+    align-items: center;
+    column-gap: 28px;
+    row-gap: 10px;
+    width: min(720px, 100%);
+  }
+
+  .logo {
+    grid-area: logo;
+    width: min(100%, 340px);
+    font-size: clamp(28px, 5vw, 42px);
+  }
+
+  .hero {
+    grid-area: hero;
+    width: clamp(150px, min(100%, (100dvh - 190px) * 2), 340px);
+  }
+
+  .title-menu {
+    grid-area: menu;
+    width: 100%;
+  }
+}
+
+/* ------------------------------------------------------------------ dialogs */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  padding: 50px 14px 24px;
+  overflow-y: auto;
+  background: rgba(110, 76, 76, 0.32);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.2s,
+    visibility 0s 0.2s;
+}
+
+/* Visible from the first frame when opening, so its buttons can take focus right away. */
+.overlay.open {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity 0.2s,
+    visibility 0s;
+}
+
+.overlay.open .panel {
+  animation: panel-in 0.36s cubic-bezier(0.2, 1.35, 0.4, 1) both;
+}
+
+@keyframes panel-in {
+  from {
+    transform: translateY(24px) scale(0.92);
+    opacity: 0;
+  }
+}
+
+.panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  width: min(380px, 100%);
+  padding: 30px 8px 10px;
+  border: 22px solid transparent;
+  border-image: var(--img-frame) 46 fill / 22px stretch;
+  text-align: center;
+}
+
+.panel-small {
+  width: min(330px, 100%);
+  padding-top: 12px;
+}
+
+.ribbon {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  translate: -50% 0;
+  display: grid;
+  place-items: center;
+  width: min(240px, 84%);
+  aspect-ratio: 531 / 108;
+  margin: 0;
+  padding-bottom: 3%;
+  background: var(--img-ribbon) center / 100% 100% no-repeat;
+  font-weight: 900;
+  font-size: 21px;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+
+/* only on sheets that have no button of their own to close them */
+.close-btn {
+  position: absolute;
+  top: -40px;
+  right: -34px;
+  width: 46px;
+  height: 46px;
+  background-image: var(--img-close);
+}
+
+.stack {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  width: 100%;
+  margin-top: 14px;
+}
+
+.stack > .btn {
+  width: min(240px, 100%);
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.row > .btn {
+  flex: 1 1 0;
+  max-width: 150px;
+  min-width: 0;
+}
+
+/* ------------------------------------------------------------------ pause */
+
+#screen-pause .btn-big {
+  width: min(250px, 100%);
+}
+
+.icon-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.icon-btn {
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-weight: 900;
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.icon-btn .blob {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  background: var(--img-blob) center / 100% 100% no-repeat;
+  transition: transform 0.1s;
+}
+
+.icon-btn:active .blob {
+  transform: scale(0.9);
+}
+
+.icon-btn svg {
+  width: 56%;
+  height: 56%;
+}
+
+/* ------------------------------------------------------------------ how to play: swipeable cards */
+
+.cards {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 100%;
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+
+.cards::-webkit-scrollbar {
+  display: none;
+}
+
+.card {
+  display: grid;
+  grid-template-rows: minmax(150px, 1fr) auto;
+  align-items: center;
+  justify-items: center;
+  gap: 10px;
+  min-height: 228px;
+  padding: 0 6px;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.card p {
+  margin: 0;
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.dots {
+  display: flex;
+  justify-content: center;
+  gap: 7px;
+  margin: 14px 0 16px;
+}
+
+.dots i {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: rgba(138, 98, 98, 0.22);
+  transition:
+    width 0.2s,
+    background 0.2s;
+}
+
+.dots i.on {
+  width: 22px;
+  background: var(--pink-btn);
+}
+
+#howto-next {
+  min-width: 170px;
+}
+
+/* little scenes drawn with the game's own pieces */
+.scene {
+  position: relative;
+  width: 200px;
+  height: 150px;
+}
+
+.mini-box {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 156px;
+  height: 92px;
+  translate: -50% 0;
+  border: 3px solid var(--ink);
+  border-top: 0;
+  border-radius: 0 0 16px 16px;
+  background: #fdf8ee;
+  box-shadow:
+    inset 6px 0 0 var(--pink),
+    inset -6px 0 0 var(--pink),
+    inset 0 -6px 0 var(--pink);
+}
+
+.mini-box img {
+  position: absolute;
+}
+
+/* falls into the gap between the friends already on the box floor */
+.drop-ball {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 0;
+  width: 36px;
+  translate: -50% 0;
+  animation: drop 2.2s infinite;
+}
+
+@keyframes drop {
+  0%,
+  25% {
+    transform: translateY(0);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.5, 0, 1, 0.6);
+  }
+  50% {
+    transform: translateY(105px);
+    opacity: 1;
+  }
+  80%,
+  100% {
+    transform: translateY(105px);
+    opacity: 0;
+  }
+}
+
+.guide-dots {
+  position: absolute;
+  left: 50%;
+  top: 40px;
+  height: 60px;
+  border-left: 4px dotted rgba(168, 138, 135, 0.6);
+  translate: -2px 0;
+}
+
+.mini-line {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  top: 14px;
+  border-top: 3px dashed var(--danger);
+}
+
+.mini-over {
+  position: absolute;
+  border-radius: 50%;
+  animation: warn 0.9s ease-in-out infinite;
+}
+
+@keyframes warn {
+  50% {
+    filter: drop-shadow(0 0 6px var(--danger));
+  }
+}
+
+.equation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: var(--text-soft);
+  font-weight: 900;
+  font-size: 22px;
+}
+
+.equation img {
+  width: 44px;
+  height: 44px;
+}
+
+.equation .big {
+  width: 60px;
+  height: 60px;
+}
+
+.equation svg {
+  width: 62px;
+  height: 62px;
+  color: var(--yellow-deep);
+}
+
+.merge-scene {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.chain {
+  display: grid;
+  grid-template-columns: repeat(5, auto);
+  align-items: end;
+  justify-content: center;
+  gap: 2px 6px;
+}
+
+.chain img {
+  width: calc(22px + var(--i) * 1.6px);
+  height: auto;
+  aspect-ratio: 1;
+}
+
+.ab-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 104px));
+  justify-content: center;
+  gap: 10px 14px;
+}
+
+.ab-mini {
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  font-weight: 900;
+  font-size: 13px;
+}
+
+.ab-mini .blob {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  background: var(--img-blob) center / 100% 100% no-repeat;
+}
+
+.ab-mini svg {
+  width: 60%;
+  height: 60%;
+}
+
+/* ------------------------------------------------------------------ friend collection */
+
+.collection {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.collection li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  font-weight: 900;
+  font-size: 14px;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.collection .pic {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  background: var(--img-blob) center / 100% 100% no-repeat;
+}
+
+.collection img {
+  width: 80%;
+  height: 80%;
+}
+
+.collection .name {
+  min-width: 0;
+  /* a long name on a narrow screen splits evenly (くりまん / じゅう) */
+  text-wrap: balance;
+}
+
+.collection .unknown img,
+.friend.unknown img {
+  filter: brightness(0) opacity(0.14);
+}
+
+.collection .unknown .name {
+  color: var(--text-soft);
+}
+
+.collection .best .pic {
+  filter: drop-shadow(0 0 6px var(--yellow-deep));
+}
+
+/* ------------------------------------------------------------------ settings */
+
+.settings {
+  width: 100%;
+  border: 2px solid rgba(138, 98, 98, 0.28);
+  border-radius: 18px;
+  background: #fff;
+  text-align: left;
+}
+
+.setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 6px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.setting + .setting {
+  border-top: 2px dashed rgba(138, 98, 98, 0.2);
+}
+
+.setting input[type='checkbox'] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.switch {
+  position: relative;
+  flex: none;
+  width: 52px;
+  height: 30px;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  background: #eadfd8;
+  transition: background 0.2s;
+}
+
+.switch::after {
+  content: '';
+  position: absolute;
+  /* track inside is 47 x 25px; a 19px knob with 3px clearance on each side */
+  top: 3px;
+  left: 3px;
+  width: 19px;
+  height: 19px;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: #fff;
+  transition: translate 0.2s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+
+.setting input:checked + .switch {
+  background: var(--pink-btn);
+}
+
+.setting input:checked + .switch::after {
+  translate: 22px 0;
+}
+
+.setting input:focus-visible + .switch,
+.setting input[type='range']:focus-visible {
+  outline: 3px solid #8fbbe6;
+  outline-offset: 2px;
+}
+
+/* volume: a soft pink bar; --val (0-100%) is kept up to date from App.bindSettings */
+.setting input[type='range'] {
+  flex: 0 1 150px;
+  min-width: 0;
+  height: 28px;
+  margin: 0;
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.setting input[type='range']::-webkit-slider-runnable-track {
+  box-sizing: border-box;
+  height: 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--pink-btn) var(--val, 50%), #fff var(--val, 50%));
+}
+
+.setting input[type='range']::-webkit-slider-thumb {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  margin-top: -7px;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: #fff;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.setting input[type='range']::-moz-range-track {
+  box-sizing: border-box;
+  height: 14px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+}
+
+.setting input[type='range']::-moz-range-progress {
+  height: 10px;
+  border-radius: 999px;
+  background: var(--pink-btn);
+}
+
+.setting input[type='range']::-moz-range-thumb {
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid var(--ink);
+  border-radius: 50%;
+  background: #fff;
+}
+
+#btn-reset-best {
+  margin-top: 10px;
+}
+
+/* ------------------------------------------------------------------ game over */
+
+/* おしまい sits low with a light dim, so the top of the final pile stays in view */
+#screen-over {
+  place-items: end center;
+  padding-bottom: max(20px, env(safe-area-inset-bottom));
+  background: rgba(110, 76, 76, 0.18);
+}
+
+.over-name {
+  margin-top: 4px;
+  font-weight: 900;
+  font-size: 14px;
+  color: var(--text-soft);
+}
+
+.over-friend {
+  display: grid;
+  place-items: center;
+  width: 86px;
+  height: 86px;
+  margin-top: 2px;
+  background: var(--img-blob) center / 100% 100% no-repeat;
+  animation: bob 2s ease-in-out infinite;
+}
+
+.over-friend img {
+  width: 76%;
+  height: 76%;
+}
+
+.over-score {
+  margin-top: 4px;
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1.05;
+  font-variant-numeric: tabular-nums;
+}
+
+#over-best {
+  font-size: 13px;
+}
+
+.new-best {
+  padding: 2px 14px;
+  border: 2.5px solid var(--ink);
+  border-radius: 999px;
+  background: var(--yellow-deep);
+  font-weight: 900;
+  font-size: 14px;
+  animation: ready 1s ease-out infinite;
+}
+
+/* ------------------------------------------------------------------ ability dialog */
+
+.ability-hero {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+
+.hero-icon {
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  background: var(--img-blob) center / 100% 100% no-repeat;
+}
+
+.hero-icon svg {
+  width: 62%;
+  height: 62%;
+}
+
+.charge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 22px;
+}
+
+.gems {
+  display: flex;
+  gap: 2px;
+}
+
+.gems .gem {
+  width: 22px;
+  height: 22px;
+}
+
+.gems .gem.off {
+  filter: grayscale(1);
+  opacity: 0.35;
+}
+
+.mini-meter {
+  width: 70px;
+  height: 10px;
+  border: 2px solid var(--ink);
+  border-radius: 999px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.mini-meter i {
+  display: block;
+  height: 100%;
+  background: var(--pink-btn);
+  transition: width 0.3s;
+}
+
+.ability-desc {
+  margin: 12px 4px 0;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* one sentence per line (or balanced lines) */
+.ability-desc span {
+  display: block;
+}
+
+/* every choice on one row, however many there are (--n is set from App.openAbility) */
+.picker {
+  display: grid;
+  grid-template-columns: repeat(var(--n, 5), minmax(0, 60px));
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 14px;
+}
+
+.pick-option {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  background: var(--img-blob) center / 100% 100% no-repeat;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.pick-option img {
+  width: 76%;
+  height: 76%;
+}
+
+.pick-option:active {
+  transform: scale(0.9);
+}
+
+.pick-option.current {
+  filter: drop-shadow(0 0 0 #fff) drop-shadow(0 0 6px var(--yellow-deep));
+}
+
+.pick-option:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.confirm-text {
+  margin: 4px 0 0;
+  font-weight: 900;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+/* ------------------------------------------------------------------ very narrow phones (fold cover screens) */
+
+@media (max-width: 360px) {
+  .menu-btn,
+  .next-bubble {
+    width: 44px;
+    height: 44px;
+  }
+
+  .score {
+    font-size: 22px;
+  }
+
+  .ab-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .ab-name {
+    font-size: 12px;
+  }
+
+  .panel {
+    padding-inline: 2px;
+  }
+
+  .icon-btn {
+    font-size: 11px;
+  }
+
+  .icon-btn .blob {
+    width: 48px;
+    height: 48px;
+  }
+
+  .collection .pic {
+    width: 44px;
+    height: 44px;
+  }
+
+  .collection li {
+    font-size: 13px;
+  }
+}
+
+/* ------------------------------------------------------------------ wide screens: PC, landscape tablets, unfolded phones */
+
+@media (min-aspect-ratio: 1/1) and (min-width: 640px) {
+  /*
+   * Three columns of one height: score and friends | cabinet | next, abilities and menu.
+   * The cabinet keeps priority: it gets the width that makes the box fill it edge to edge
+   * at full height (stage 648 x 1044), and the side panels (160-250px) share the rest.
+   */
+  .game {
+    --pad: 16px;
+    --board-w: calc((100dvh - 2 * var(--pad) - var(--line)) * 648 / 1044);
+    --side-w: clamp(160px, calc((100vw - var(--board-w) - 2 * var(--pad) - 32px) / 2), 250px);
+    max-width: none;
+    padding: max(var(--pad), env(safe-area-inset-top)) max(var(--pad), env(safe-area-inset-right))
+      max(var(--pad), env(safe-area-inset-bottom)) max(var(--pad), env(safe-area-inset-left));
+    column-gap: 16px;
+    grid-template-columns: var(--side-w) min(var(--board-w), calc(100vw - 2 * var(--side-w) - 2 * var(--pad) - 32px)) var(--side-w);
+    grid-template-rows: minmax(0, 1fr);
+    grid-template-areas: 'left cab right';
+    justify-content: center;
+    align-items: stretch;
+  }
+
+  .side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    min-height: 0;
+    padding: 18px 12px;
+    border: var(--line) solid var(--ink);
+    border-radius: 26px;
+    background: var(--paper);
+    box-shadow: inset 0 4px 0 #fff;
+  }
+
+  .side-left {
+    grid-area: left;
+  }
+
+  .side-right {
+    grid-area: right;
+    justify-content: space-between;
+  }
+
+  .cabinet {
+    border-bottom: var(--line) solid var(--ink);
+    border-radius: 26px;
+  }
+
+  #stage {
+    clip-path: inset(0 round 23px 23px 26px 26px);
+  }
+
+  .menu-btn,
+  .scorebox,
+  .next {
+    margin: 0;
+  }
+
+  .scorebox {
+    width: 100%;
+  }
+
+  .score {
+    width: 100%;
+    font-size: clamp(24px, 2.2vw, 32px);
+  }
+
+  .best-chip {
+    font-size: 13px;
+  }
+
+  .chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+  }
+
+  .chart-title {
+    font-size: 13px;
+  }
+
+  /* the friends chart shrinks with the panel instead of scrolling */
+  .friends {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(5, minmax(0, 1fr));
+    gap: 6px 4px;
+    flex: 0 1 430px;
+    min-height: 0;
+    width: min(100%, 170px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .friend {
+    display: grid;
+    place-items: center;
+    min-height: 0;
+    border-radius: 50%;
+  }
+
+  .friend img {
+    width: auto;
+    max-width: 100%;
+    height: 100%;
+    max-height: 76px;
+    aspect-ratio: 1;
+    object-fit: contain;
+  }
+
+  .friend.best {
+    background: radial-gradient(circle closest-side, #fff3bf 60%, transparent);
+  }
+
+  .friend.fresh {
+    animation: ready 1s ease-out;
+  }
+
+  .next {
+    gap: 0;
+  }
+
+  .next-bubble {
+    width: 84px;
+    height: 84px;
+  }
+
+  .next .chip {
+    font-size: 13px;
+  }
+
+  .abilities {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 8px;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  .ab-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .ab-name {
+    font-size: 14px;
+  }
+
+  .menu-btn {
+    width: 52px;
+    height: 52px;
+  }
+}
+
+/* short landscape screens (phones turned sideways): everything smaller, the chart as 5 x 2 */
+@media (min-aspect-ratio: 1/1) and (min-width: 640px) and (max-height: 600px) {
+  .game {
+    --pad: 10px;
+  }
+
+  .side {
+    gap: 10px;
+    padding: 12px 10px;
+  }
+
+  .side-left {
+    justify-content: center;
+  }
+
+  .chart {
+    flex: none;
+    gap: 8px;
+  }
+
+  .friends {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-rows: none;
+    flex: none;
+    width: min(100%, 230px);
+  }
+
+  .friend img {
+    width: 100%;
+    height: auto;
+  }
+
+  .next-bubble {
+    width: 62px;
+    height: 62px;
+  }
+
+  .abilities {
+    gap: 10px 6px;
+  }
+
+  .ab-icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .ab-name {
+    font-size: 12px;
+  }
+
+  .menu-btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-friend,
+  .over-friend,
+  .new-best,
+  .drop-ball,
+  .mini-over,
+  .ability.active .ab-icon::after {
+    animation: none;
+  }
+}
+
+body.reduce-motion .hero-friend,
+body.reduce-motion .over-friend,
+body.reduce-motion .new-best,
+body.reduce-motion .drop-ball,
+body.reduce-motion .mini-over,
+body.reduce-motion .ability.active .ab-icon::after {
+  animation: none;
+}

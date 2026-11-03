@@ -1,0 +1,19 @@
+{
+  "name": "mochi-mochi-pon",
+  "private": true,
+  "version": "1.0.0",
+  "description": "A cosy drop-and-merge puzzle game with a hand-drawn, Chiikawa-inspired look.",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.1.0"
+  }
+}
